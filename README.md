@@ -30,6 +30,7 @@ This can support:
 ---
 
 ## Project Structure
+```
 ├── README.md <- Top-level project documentation
 │
 ├── data
@@ -48,7 +49,7 @@ This can support:
 ├── requirements.txt <- Python dependencies for reproducibility
 │
 └── src <- Source code (data processing, training, evaluation, utility modules)
----
+---```
 
 ## Workflow
 
