@@ -1,13 +1,29 @@
 import pandas as pd 
 from sqlalchemy import create_engine
+from src.config import settings
 
+from pydantic import BaseModel, field_validator
+import re
+
+class TableIdentifier(BaseModel):
+    """To avoid sql injection"""
+    table_name:str
+    
+    
+    @field_validator("table_name")
+    @classmethod
+    def validate_table_name(cls, value:str) -> str:
+        pattern = r"^[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*$"
+        if not re.fullmatch(pattern,value):
+            raise ValueError("Invalid table name")
+        return value
 
 
 class DataHandler:
     def __init__(self, server: str, driver: str, database: str ):
         self.server = server
         self.driver = driver
-        self.database = database
+        self.database = database 
         
     def read_sql_table(self,table_name:str):
         """Read table from sql database
@@ -17,21 +33,29 @@ class DataHandler:
         return:
                 Pandas DataFrame    
         """
-        if not isinstance(table_name, str):
-            raise ValueError("table name must be a string")
+        # To avoid sql injection
+        validated = TableIdentifier(table_name=table_name)
         
-        query = f"select * from {table_name}"
+        query = f"select * from {validated.table_name}"
         
         try: 
+            # engine = create_engine(
+            #     fr"mssql+pyodbc:///?odbc_connect=DRIVER={{{self.driver}}};SERVER={self.server};DATABASE={self.database};Trusted_Connection=yes;TrustServerCertificate=yes"
+            # )
             engine = create_engine(
-                fr"mssql+pyodbc:///?odbc_connect=DRIVER={{{self.driver}}};SERVER={self.server};DATABASE={self.database};Trusted_Connection=yes;TrustServerCertificate=yes"
+                f"mssql+pyodbc://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{self.server}:1433/{self.database}"
+                f"?driver={self.driver.replace(' ', '+')}"
+                f"&TrustServerCertificate=yes"
             )
             
             df = pd.read_sql(sql=query, con=engine)
             
             return df
         except Exception as e:
-            print(e)
+            print(f"Database error: {e}")
+            raise
+
+            
             
             
     @staticmethod

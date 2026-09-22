@@ -41,8 +41,6 @@ This can support:
 │
 ├── notebooks <- Jupyter notebooks for EDA and experimentation
 │
-├── reference <- Supporting documentation and domain knowledge
-│
 ├── reports <- Generated analysis reports (HTML, PDF, etc.)
 │ └── figures <- Visualizations and plots used in reports
 │
