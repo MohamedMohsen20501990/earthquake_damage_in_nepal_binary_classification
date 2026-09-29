@@ -10,6 +10,7 @@ from src.config import settings
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 from src.preprocess import Preprocessor
+from src.train import ModelTrainer
 
 
 from pydantic import BaseModel, field_validator
@@ -114,7 +115,6 @@ class DataHandler:
         df["severe_damage"] = df["damage_grade"].apply(lambda x: x>3).astype(int)
         
         # Drop_list for leakage-multicollinearity
-        
         # leakage
         drop_list = [col for col in df.columns if "post_eq" in col]
         
@@ -193,6 +193,10 @@ if __name__ =="__main__":
     data_handler.split_and_save(df)   
     
     data_preprocessor = Preprocessor()
-    data_preprocessor.start_data_preprocessing(train_path = data_handler.data_config.train_data_path, test_path=data_handler.data_config.test_data_path)
+    train_data, test_data, preprocesor_path = data_preprocessor.start_data_preprocessing(train_path = data_handler.data_config.train_data_path, test_path=data_handler.data_config.test_data_path)
+    model_trainer = ModelTrainer()
+    model_trainer.build_model_trainer(train_data=train_data, test_data=test_data)
+    model_trainer.show_report()
+    
     
     

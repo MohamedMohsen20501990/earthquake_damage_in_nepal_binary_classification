@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 @dataclass
 class PreprocessorConfig:
     preprocessor_path: str = os.path.join("artifacts", "preprocessor.pkl")
-    transformed_train_paths: str = os.path.join("artifacts", "train_transformed.parquet")
+    transformed_train_path : str = os.path.join("artifacts", "train_transformed.parquet")
     transformed_test_path: str = os.path.join("artifacts", "test_transformed.parquet")
 
 
@@ -92,7 +92,7 @@ class Preprocessor:
             return (
                 train_transformed_df,
                 test_transformed_df, 
-                preprocessor_obj
+                self.preprocessor_config.preprocessor_path
             )
         except Exception as e:
             print(f"error starting preprocessing: {e}")
