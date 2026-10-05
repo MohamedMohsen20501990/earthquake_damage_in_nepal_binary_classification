@@ -87,6 +87,8 @@ class DataHandler:
         Args:
             path:str
                 Path to the raw CSV file.
+            data_frame
+                pandas DataFrame objct    
         returns:        
         -------
         pd.DataFrame
@@ -187,6 +189,7 @@ class DataHandler:
 
                 
 if __name__ =="__main__":
+    
     data_handler = DataHandler(server="localhost", driver="ODBC Driver 18 for Sql Server", database="MyDatabase")
     raw_df = data_handler.read_sql_table("dbo.earthquake_data")
     df = data_handler.wrangle_data(data_frame=raw_df)
@@ -197,6 +200,5 @@ if __name__ =="__main__":
     model_trainer = ModelTrainer()
     model_trainer.build_model_trainer(train_data=train_data, test_data=test_data)
     model_trainer.show_report()
-    
     
     
