@@ -59,141 +59,50 @@ This can support:
 6. Communicating results
 
 ---
-classDiagram
-
-    %% =========================
-    %% Data Processing
-    %% =========================
-
-    class DataConfig {
-        +str train_data_path
-        +str test_data_path
-        +str raw_data_path
-    }
-
-    class TableIdentifier {
-        +str table_name
-        +validate_table_name(value) str
-    }
-
-    class DataHandler {
-        +DataConfig data_config
-        +str server
-        +str driver
-        +str database
-        +engine engine
-        +read_sql_table(table_name) DataFrame
-        +wrangle_data(data_frame, path, index_col) DataFrame
-        +save_to_sql(data_frame, table_name)
-        +split_and_save(data_frame)
-    }
-
-    %% =========================
-    %% Preprocessing
-    %% =========================
-
-    class PreprocessorConfig {
-        +str preprocessor_path
-        +str transformed_train_path
-        +str transformed_test_path
-    }
-
-    class Preprocessor {
-        +PreprocessorConfig preprocessor_config
-        +build_preprocessor() ColumnTransformer
-        +start_data_preprocessing(train_path, test_path)
-    }
-
-    %% =========================
-    %% Model Training
-    %% =========================
-
-    class ModelTrainConfig {
-        +str trained_model_path
-    }
-
-    class ModelTrainer {
-        +ModelTrainConfig model_train_config
-        +dict report
-        +str best_model_name
-        +float test_accuracy
-        +build_model_trainer(train_data, test_data)
-        +show_report()
-    }
-
-    %% =========================
-    %% Inference
-    %% =========================
-
-    class InputData {
-        +int building_id
-        +int age_building
-        +float plinth_area_sq_ft
-        +float height_ft_pre_eq
-        +str land_surface_condition
-        +str foundation_type
-        +str roof_type
-        +str ground_floor_type
-        +str other_floor_type
-        +str position
-        +str plan_configuration
-        +input_data_to_data_frame() DataFrame
-    }
-
-    class InferencePipeline {
-        +str model_path
-        +str preprocessor_path
-        +model model
-        +preprocessor preprocessor
-        +predict(input_data) dict
-    }
-
-    %% =========================
-    %% API Layer
-    %% =========================
-
-    class DataIN {
-        +int building_id
-        +int age_building
-        +float plinth_area_sq_ft
-        +float height_ft_pre_eq
-        +str land_surface_condition
-        +str foundation_type
-        +str roof_type
-        +str ground_floor_type
-        +str other_floor_type
-        +str position
-        +str plan_configuration
-    }
-
-    class DataOut {
-        +int building_id
-        +bool success
-        +int prediction
-        +str message
-    }
-
-    %% =========================
-    %% Relationships
-    %% =========================
-
-    DataHandler --> DataConfig : uses
-    DataHandler --> TableIdentifier : validates
-
-    DataHandler --> Preprocessor : provides train/test data
-    Preprocessor --> PreprocessorConfig : uses
-
-    Preprocessor --> ModelTrainer : provides transformed data
-    ModelTrainer --> ModelTrainConfig : uses
-
-    InputData --> InferencePipeline : input
-    InferencePipeline --> Preprocessor : transforms features
-    InferencePipeline --> ModelTrainer : loads trained model
-
-    DataIN --> InputData : creates
-    DataIN --> InferencePipeline : request
-
-    InferencePipeline --> DataOut : prediction
+                    TRAINING
+                       │
+                       ▼
+        ┌──────────────────────────┐
+        │       Raw Data           │
+        └────────────┬─────────────┘
+                     ▼
+               DataHandler
+                     │
+                     ▼
+             Data Preprocessing
+                     │
+                     ▼
+               Model Training
+                     │
+             ┌───────┴────────┐
+             ▼                ▼
+      preprocessor.pkl     model.pkl
+             │                │
+             └───────┬────────┘
+                     │
+                     ▼
+                  DEPLOY
+                     │
+              ┌──────▼──────┐
+              │  Streamlit  │
+              └──────┬──────┘
+                     ▼
+                ┌─────────┐
+                │ FastAPI │
+                └────┬────┘
+                     ▼
+              Pydantic Validation
+                     │
+                     ▼
+              InferencePipeline
+                     │
+              ┌──────┴──────┐
+              ▼             ▼
+        Preprocessor      Model
+              │             │
+              └──────┬──────┘
+                     ▼
+                 Prediction
 
 
 ## Dataset
