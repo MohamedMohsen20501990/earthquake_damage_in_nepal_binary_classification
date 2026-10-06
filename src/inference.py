@@ -4,6 +4,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import pandas as pd
 from src.utils import load_obj
+from src.logging_config import logger
 
 
 
@@ -40,10 +41,11 @@ class InferencePipeline:
             transformed_data = self.preprocessor.transform(features)
             prediction = self.model.predict(transformed_data)
             return {"building_id": building_id,  "prediction": int(prediction[0])}
-        except Exception as e:
-            print(f"Error making prediction: {e}")
+        except Exception:
+            logger.exception("Error while prediction")
             raise
-        
+
+
         
     
     
@@ -103,9 +105,8 @@ class InputData:
             }
             df = pd.DataFrame(input_data)
             return df
-        except Exception as e:
-            print(f"Error converting data to DataFrame: {e}")
-            raise
+        except Exception:
+            logger.exception("Error converting input data to DataFrame")
 
 if __name__ == "__main__":
     input_data = InputData(

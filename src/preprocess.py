@@ -6,7 +6,7 @@ from sklearn.preprocessing import RobustScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 import pandas as pd
 from src.utils import save_obj
-
+from src.logging_config import logger
 
 
 import warnings
@@ -49,8 +49,8 @@ class Preprocessor:
             
             return preprocessor
             
-        except Exception as e:
-            print(f"error: preprocessor building {e}")
+        except Exception:
+            logger.exception("Error building Preprocessor")
             raise
 
     
@@ -94,6 +94,6 @@ class Preprocessor:
                 test_transformed_df, 
                 self.preprocessor_config.preprocessor_path
             )
-        except Exception as e:
-            print(f"error starting preprocessing: {e}")
+        except Exception:
+            logger.exception("Error starting preprocessing")
             raise

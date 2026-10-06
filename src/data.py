@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 from src.preprocess import Preprocessor
 from src.train import ModelTrainer
+from src.logging_config import logger
 
 
 from pydantic import BaseModel, field_validator
@@ -72,9 +73,10 @@ class DataHandler:
         try: 
             df = pd.read_sql(sql=query, con=self.engine)
             return df
-        except Exception as e:
-            print(f"Database error: {e}")
+        except Exception:
+            logger.exception("Database error while reading SQL table")
             raise
+
 
             
             
@@ -160,9 +162,10 @@ class DataHandler:
         try:
             schema,table = validated.table_name.split(".")
             data_frame.to_sql(name=table, schema=schema, con=self.engine, if_exists="replace", index=False)
-        except Exception as e:
-            print(f"DataBase error{e}")
-            raise    
+        except Exception:
+            logger.exception("Error while saving DataFrame to SQL")
+            raise
+ 
     
                 
                 
@@ -183,9 +186,10 @@ class DataHandler:
             train_data.to_csv(self.data_config.train_data_path, index=False, header=True)
             test_data.to_csv(self.data_config.test_data_path, index=False, header=True)
             data_frame.to_csv(self.data_config.raw_data_path, index=False, header=True)
-        except Exception as e:
-            print(f"Error saving file: {e}")    
-        
+        except Exception:
+            logger.exception("Error saving file")
+            raise  
+
 
                 
 if __name__ =="__main__":

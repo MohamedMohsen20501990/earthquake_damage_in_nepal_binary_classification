@@ -7,6 +7,7 @@ from xgboost import XGBClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from src.utils import save_obj, evaluate_model
+from src.logging_config import logger
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -86,8 +87,8 @@ class ModelTrainer:
             print(f"Test accuracy: {test_accuracy}")
             return best_model
             
-        except Exception as e:
-            print(f"Error building the model trainer: {e}")
+        except Exception:
+            logger.exception("Error building model trainer")
             raise
     def show_report(self):
         for model_name, scores in self.report.items():
