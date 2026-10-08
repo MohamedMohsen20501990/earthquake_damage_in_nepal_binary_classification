@@ -3,7 +3,7 @@ name: ci/cd_earthquake_nepal_api
 on:
   push:
     branches: [main]
-    
+
 permissions:
   contents: read
   id-token: write
@@ -27,6 +27,9 @@ jobs:
           pip install pytest
 
       - name: run tests
+        env:
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         run: pytest
 
   build-and-publish:
