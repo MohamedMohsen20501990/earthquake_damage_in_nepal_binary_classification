@@ -50,7 +50,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: build and push docker image
-        id: build-and-publish
+        id: docker-build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -59,7 +59,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/nepal_earthquake_api:latest
             ${{ secrets.DOCKER_USERNAME }}/nepal_earthquake_api:${{ github.sha }}
       - name: Image digest
-        run: echo ${{ steps.build-and-publish.outputs.digest}}
+        run: echo ${{ steps.docker-build.outputs.digest }}
 
   deploy-to-azure:
  
