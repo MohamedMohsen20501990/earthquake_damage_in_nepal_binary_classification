@@ -83,5 +83,4 @@ jobs:
           imageToDeploy: docker.io/${{ secrets.DOCKER_USERNAME }}/nepal_earthquake_api:${{ github.sha }}
           registryUrl: docker.io
           registryUsername: ${{ secrets.DOCKER_USERNAME }}
-          registryPassword: ${{ secrets.DOCKER_TOKEN }}      
-
+          registryPassword: ${{ secrets.DOCKER_TOKEN }} 
