@@ -8,6 +8,17 @@ __pycache__/
 .venv/
 venv/
 env/
+.venv
+venv
+.streamlit
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+.DS_Store
+.pytest_cache
+.mypy_cache
 
 # Jupyter notebooks
 *.ipynb
