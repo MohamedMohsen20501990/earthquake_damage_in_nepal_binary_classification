@@ -15,10 +15,16 @@ class InferencePipeline:
     and preprocessor, transforming input data, and generating predictions.
     """
     def __init__(self):
+        logger.info("Initializing InferencePipeline")
         self.model_path = "artifacts/model.pkl"
         self.preprocessor_path = "artifacts/preprocessor.pkl"
+        logger.debug(f"Loading model from: {self.model_path}")
         self.model = load_obj(self.model_path)
+        logger.info("Model loaded successfully")
+        logger.debug(f"Loading preprocessor from: {self.preprocessor_path}")
         self.preprocessor = load_obj(self.preprocessor_path)
+        logger.info("Preprocessor loaded successfully")
+        logger.info("InferencePipeline initialized successfully")
     
     def predict(self, input_data):
         """
@@ -35,6 +41,11 @@ class InferencePipeline:
             Building ID and predicted damage class.
         """
         try:
+            logger.info("Starting prediction")
+            logger.debug(
+                f"Converting input data to DataFrame | "
+                f"building_id={input_data.building_id}"
+            )
             df = input_data.input_data_to_data_frame()
             building_id = input_data.building_id
             features = df.drop(columns=["building_id"])

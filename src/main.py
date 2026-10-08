@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from src.inference import InputData, InferencePipeline
 from pydantic import BaseModel, Field
 from typing import Literal
+from src.logging_config import logger
 
 class DataIN(BaseModel):
     building_id: int = Field(gt=0)
@@ -34,9 +35,12 @@ app = FastAPI()
     
 @app.post("/predict", status_code=200, response_model=DataOut)  
 def predict(request: DataIN):
+    logger.info("Prediction endpoint started")
+    logger.debug(f"Received prediction request for building_id={request.building_id}")
     response = request.model_dump()
     
     try:
+        logger.info("Creating InputData object")
         input_data = InputData(
             building_id= request.building_id,
             age_building= request.age_building,
@@ -50,6 +54,9 @@ def predict(request: DataIN):
             position=request.position,
             plan_configuration=request.plan_configuration
         )
+        logger.info("InputData object created successfully")
+        logger.info("Initializing InferencePipeline")
+        
         inference_pipeline = InferencePipeline()
         prediction = inference_pipeline.predict(input_data=input_data)
         response["success"] = True
